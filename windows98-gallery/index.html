@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>GPT Image 2 Prompt Explorer | Windows 98 Edition</title>
+<style>
+:root{--desktop:#008B8B;--teal:#0A8F95;--gray:#C9C9C9;--light:#ECECEC;--blue:#0C5DA5;--navy:#003366;--beige:#E6DDC8;--ink:#111;--white:#fff;--shadow:#555;--dark:#777;--sel:#000080}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Tahoma,"MS Sans Serif",Arial,sans-serif;font-size:12px;color:var(--ink);background:#064f50}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,.item:focus-visible{outline:1px dotted #111;outline-offset:-3px}
+button[disabled]{opacity:.55;cursor:default}
+#desktop{position:relative;margin:auto;width:100%;height:100dvh;min-height:550px;background:var(--desktop);overflow:hidden}
+#desktop:after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.045;background-image:linear-gradient(#fff 1px,transparent 1px);background-size:100% 3px}
+.sunken{border:2px solid;border-color:#777 #fff #fff #777;box-shadow:inset 1px 1px #333;background:#fff}
+.raised{background:var(--gray);border:2px solid;border-color:#fff #555 #555 #fff;box-shadow:inset -1px -1px #888,inset 1px 1px #eee}
+.raised:active:not(:disabled),.pressed{border-color:#555 #fff #fff #555!important;box-shadow:inset 1px 1px #888!important}
+.win{background:var(--gray);border:2px solid;border-color:#fff #444 #444 #fff;box-shadow:1px 1px 0 #111,2px 2px 0 #111}
+.titlebar{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--blue);color:#fff;padding:3px 4px 3px 6px;font-weight:700;letter-spacing:.05px;height:29px;flex:none}
+.title-left{display:flex;align-items:center;gap:7px;min-width:0}
+.title-left span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app-mark{display:inline-grid;place-items:center;width:17px;height:16px;background:#e7d4a3;color:#003366;border:1px solid #fff;font-size:10px;box-shadow:1px 1px #333;flex:none}
+.win-controls{display:flex;gap:2px}
+.win-controls button{width:23px;height:21px;padding:0;display:grid;place-items:center;font-family:Arial,sans-serif;font-weight:bold;font-size:14px;line-height:1}
+.win-controls button:last-child{margin-left:2px}
+.desktop-icons{position:absolute;left:9px;top:15px;display:flex;flex-direction:column;gap:19px;z-index:1}
+.desktop-icon{width:84px;min-height:75px;background:transparent;color:#fff;border:1px solid transparent;text-shadow:1px 1px #00545b;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:4px 3px}
+.desktop-icon:focus,.desktop-icon:hover{background:rgba(0,0,128,.26);border:1px dotted #fff}
+.desktop-icon .glyph{font-family:Arial,sans-serif;display:grid;place-items:center;font-size:27px;width:34px;height:34px;line-height:1;background:#e9e5d4;color:#073d63;border:1px solid #fff;box-shadow:2px 2px #222}
+.desktop-icon .glyph.folder{background:#eec956;color:#382c10}
+.desktop-icon span:last-child{line-height:1.3}
+#mainWin{position:absolute;left:clamp(100px,8.8%,145px);right:3.2%;top:5%;bottom:53px;display:flex;flex-direction:column;z-index:4;min-height:0}
+#mainWin.maximized{inset:3px 3px 43px}
+#mainWin.minimized{display:none}
+#mainWin.closed{display:none}
+.menubar{height:27px;display:flex;align-items:center;gap:1px;padding:1px 4px;flex:none}
+.menu-button{padding:4px 9px;border:1px solid transparent;background:transparent}
+.menu-button:hover,.menu-button[aria-expanded=true]{background:var(--sel);color:#fff}
+.toolbar{display:flex;align-items:center;gap:4px;padding:5px 6px;flex:none;border-top:1px solid #eee;border-bottom:1px solid #888;min-height:47px}
+.toolbar .tool{min-width:45px;max-width:72px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1px;font-size:11px;padding:2px 5px;border:1px solid transparent;background:transparent}
+.toolbar .tool:hover{border:1px solid;border-color:#fff #666 #666 #fff}
+.toolbar .tool .tool-icon{font-size:18px;font-weight:bold;height:20px;line-height:20px;color:#143e70}
+.toolbar .sep{height:30px;border-left:1px solid #777;border-right:1px solid white;margin:0 4px}
+.toolbar .search-tools{margin-left:auto;display:flex;gap:5px;align-items:center;min-width:150px;width:min(350px,38%)}
+.toolbar input{height:27px;width:100%;padding:3px 7px}
+.addressbar{display:flex;align-items:center;gap:7px;padding:4px 8px;border-bottom:1px solid #777;flex:none;min-height:36px}
+.addressbar label{color:#454545;min-width:39px}
+.address-field{display:flex;align-items:center;gap:6px;min-width:0;flex:1;height:24px;padding:2px 5px;overflow:hidden;white-space:nowrap}
+.address-field .path{overflow:hidden;text-overflow:ellipsis}
+.go{padding:2px 12px;height:26px}
+.workspace{display:grid;grid-template-columns:196px minmax(270px,1fr) minmax(275px,340px);gap:5px;padding:6px;flex:1;min-height:0}
+.sidebar,.browser,.inspector{min-height:0;min-width:0;overflow:hidden}
+.sidebar{display:flex;flex-direction:column}
+.pane-heading{background:var(--navy);color:#fff;font-size:12px;font-weight:bold;padding:7px 8px;flex:none}
+.tree{overflow:auto;padding:9px 5px 10px;flex:1}
+.tree-heading{color:#555;font-size:10px;font-weight:bold;text-transform:uppercase;letter-spacing:.9px;padding:9px 7px 5px}
+.tree-item{width:100%;display:flex;align-items:center;gap:7px;padding:7px 8px;text-align:left;border:1px solid transparent;background:#fff;line-height:1.25}
+.tree-item:hover{background:#e5effb}
+.tree-item.active{background:var(--sel);color:#fff;border:1px dotted #fff}
+.tree-item .tree-symbol{display:inline-grid;place-items:center;font-size:14px;width:19px;min-width:19px;height:18px;color:#ad8310;background:#f3d97b;border:1px solid #b79844}
+.tree-item.active .tree-symbol{background:#e6d3a0;color:#111}
+.tree-item small{margin-left:auto;opacity:.7;font-size:10px}
+.sidebar-foot{border-top:1px solid #aaa;background:var(--light);padding:9px;color:#444;font-size:11px;line-height:1.45}
+.browser{display:flex;flex-direction:column}
+.browser-head{height:36px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 10px;border-bottom:1px solid #bbb;background:#fff;flex:none}
+.browser-head strong{font-size:13px;white-space:nowrap}
+.browser-head span{color:#777;font-size:11px;white-space:nowrap}
+.cards{padding:10px;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(143px,1fr));gap:10px;align-content:start;background:#fff;flex:1;min-height:0}
+.item{background:#fff;border:1px solid #d1d1d1;display:flex;flex-direction:column;gap:6px;text-align:left;padding:7px;min-height:172px;min-width:0;cursor:pointer}
+.item:hover{border:1px solid #005aa2;background:#edf6fe}
+.item.selected{background:#dceaff;border:1px solid #000080;outline:1px dotted #000080;outline-offset:-4px}
+.item .thumb{aspect-ratio:4/3;display:grid;place-items:center;background:var(--beige);border:1px solid #999;overflow:hidden;position:relative}
+.item .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.item .thumb .fallback-icon{font-size:30px;color:var(--blue)}
+.item .n{font-weight:bold;line-height:1.35;font-size:11px;overflow-wrap:anywhere}
+.item .meta{color:#686868;font-size:10px;margin-top:auto;display:flex;justify-content:space-between;gap:4px}
+.item .star{color:#7e5a08}
+.pager{height:34px;background:var(--light);padding:5px 8px;border-top:1px solid #bbb;display:flex;align-items:center;gap:5px;justify-content:flex-end;flex:none}
+.pager .count{margin-right:auto;color:#555;font-size:11px}
+.pager button{min-width:25px;height:23px}
+.inspector{background:var(--gray);display:flex;flex-direction:column;gap:5px;padding:4px}
+.inspector .titlebar{height:25px}
+.inspector-body{background:var(--light);display:flex;flex:1;flex-direction:column;gap:9px;padding:10px;overflow:auto;min-height:0}
+.previewimage{height:clamp(125px,26%,220px);flex:none;display:grid;place-items:center;overflow:hidden;background:#fff;border:2px solid;border-color:#666 #fff #fff #666}
+.previewimage img{height:100%;width:100%;object-fit:contain;display:block}
+.previewimage .empty{display:flex;align-items:center;justify-content:center;text-align:center;color:#777;padding:10px}
+.filetag{font-size:10px;color:#555;letter-spacing:1px;font-weight:700}
+.selected-title{font-family:Georgia,"Times New Roman",serif;font-size:19px;font-weight:bold;line-height:1.18;margin:0}
+.desc{font-size:11px;color:#434343;line-height:1.45;margin:0}
+.metadata{display:grid;grid-template-columns:62px 1fr;gap:4px 6px;padding:7px;background:#e6ddc8;border:1px solid #c0b499;font-size:11px}
+.metadata b{color:#444}
+.prompt-label{font-weight:bold;font-size:11px;display:flex;justify-content:space-between}
+.prompt-pre{display:block;white-space:pre-wrap;overflow-wrap:anywhere;background:#fff;border:2px solid;border-color:#666 #fff #fff #666;padding:8px;line-height:1.5;font:11px/1.5 "Courier New",monospace;min-height:92px;max-height:150px;overflow:auto;user-select:text;margin:0}
+.previewactions{display:flex;gap:6px;margin-top:auto}
+.previewactions button{padding:7px 8px;font-weight:bold;min-height:29px}
+.previewactions #copyBtn{flex:1}
+.statusbar{height:25px;display:flex;align-items:stretch;gap:3px;padding:3px 5px;flex:none;background:var(--gray)}
+.statusbar .cell{border:1px solid;border-color:#777 #fff #fff #777;min-width:65px;padding:2px 5px;color:#444;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.statusbar .cell:first-child{flex:1}
+#taskbar{position:absolute;bottom:0;left:0;right:0;height:42px;background:var(--gray);border-top:2px solid #fff;z-index:30;display:flex;align-items:center;gap:7px;padding:4px 7px;box-shadow:0 -1px #888}
+.start{height:30px;padding:3px 10px;display:flex;align-items:center;gap:7px;font-weight:bold;font-size:13px;flex:none}
+.start-logo{display:inline-block;width:18px;height:17px;background:conic-gradient(#3d9b43 0 25%,#eec238 0 50%,#2a77bd 0 75%,#bf3831 0);border:1px solid #fff;transform:skewY(-8deg)}
+.task-split{height:26px;border-left:1px solid #777;border-right:1px solid white}
+.task-app{display:flex;gap:7px;align-items:center;padding:4px 10px;min-width:170px;max-width:320px;flex:0 1 260px;height:29px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.task-app.active{background:#b8b8b8;border-color:#777 #fff #fff #777;box-shadow:inset 1px 1px #666}
+.tray{margin-left:auto;border:1px solid;border-color:#777 #fff #fff #777;height:29px;min-width:105px;display:flex;align-items:center;justify-content:flex-end;gap:9px;padding:4px 9px;background:#c9c9c9}
+.tray .clock{font-size:12px}
+#startMenu{position:absolute;z-index:50;bottom:40px;left:4px;width:250px;display:none;padding:3px}
+#startMenu.visible{display:block}
+.start-menu-content{display:flex;min-height:250px}
+.start-menu-rail{width:32px;background:var(--navy);color:white;writing-mode:vertical-rl;transform:rotate(180deg);font-size:18px;letter-spacing:1px;font-weight:bold;padding:12px 5px}
+.start-menu-items{flex:1;padding:5px 3px;display:flex;flex-direction:column}
+.start-menu-items button{display:flex;align-items:center;gap:9px;text-align:left;padding:11px 9px;background:transparent;border:0}
+.start-menu-items button:hover{background:var(--sel);color:#fff}
+.menu-popup{position:absolute;z-index:20;top:59px;left:10px;width:190px;padding:3px;display:none}
+.menu-popup.visible{display:block}
+.menu-popup button{width:100%;background:transparent;border:0;text-align:left;padding:7px}
+.menu-popup button:hover{background:var(--sel);color:#fff}
+.floating{position:absolute;left:20px;bottom:73px;width:220px;z-index:8}
+.floating .titlebar{height:25px}
+.floating .floating-content{padding:12px 10px;font-size:11px;line-height:1.55;background:var(--light)}
+.floating .floating-content strong{font-family:"Courier New",monospace;font-size:13px;color:var(--navy)}
+.floating.hidden{display:none}
+.modal-scrim{position:absolute;z-index:60;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.12)}
+.modal-scrim.visible{display:flex}
+.dialog{width:min(430px,92%);box-shadow:4px 4px 0 #333}
+.dialog .dialog-body{padding:17px 20px;line-height:1.6;background:var(--gray)}
+.dialog .dialog-actions{display:flex;justify-content:flex-end;gap:7px;padding:5px 16px 15px}
+.dialog .dialog-actions button{min-width:88px;padding:5px 10px}
+#toast{display:none;position:absolute;left:50%;transform:translateX(-50%);bottom:54px;z-index:70;padding:7px 14px;box-shadow:2px 2px #333}
+#toast.visible{display:block}
+.small{font-size:10px;color:#777}
+@media (min-aspect-ratio:16/9){#desktop{width:calc(100dvh * 16 / 9);height:100dvh}}
+@media (max-width:1100px){.workspace{grid-template-columns:160px minmax(230px,1fr) 270px}.toolbar .tool{min-width:37px}.desktop-icons{display:none}#mainWin{left:2%;right:2%}.floating{display:none}}
+@media (max-width:780px){#desktop{width:100%;min-height:620px}.workspace{grid-template-columns:130px minmax(200px,1fr)}.inspector{position:absolute;right:8px;top:148px;bottom:35px;width:43%;z-index:7;box-shadow:2px 2px 0 #111;display:none}.inspector.open{display:flex}.item{min-height:140px}.toolbar .tool:not(:first-child){display:none}.sidebar-foot{display:none}#mainWin{left:7px;right:7px;top:8px;bottom:46px}.cards{grid-template-columns:repeat(auto-fill,minmax(125px,1fr))}.task-app{min-width:0}.statusbar .cell:not(:first-child){display:none}}
+@media (max-width:520px){.workspace{grid-template-columns:1fr}.sidebar{display:none}.browser-head span{display:none}.inspector{width:90%;left:5%;right:5%}.search-tools{width:100%!important;min-width:0!important}.addressbar{gap:3px}.addressbar label{display:none}.toolbar{padding-left:4px}.previewactions button{font-size:11px}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div id="desktop">
+  <div class="desktop-icons" aria-label="Desktop shortcuts">
+    <button class="desktop-icon" data-action="restore"><span class="glyph">▣</span><span>My Computer</span></button>
+    <button class="desktop-icon" data-action="restore"><span class="glyph folder">▤</span><span>Prompt Library</span></button>
+    <button class="desktop-icon" data-action="about"><span class="glyph">?</span><span>Read Me</span></button>
+    <a class="desktop-icon" href="https://github.com/framevoid1312/awesome-gpt-image-2" target="_blank" rel="noreferrer" style="text-decoration:none"><span class="glyph">⌘</span><span>GitHub</span></a>
+  </div>
+
+  <main id="mainWin" class="win" aria-label="Prompt Explorer application">
+    <div class="titlebar" id="dragHandle">
+      <div class="title-left"><span class="app-mark">P</span><span>GPT Image 2 - Prompt Explorer</span></div>
+      <div class="win-controls">
+        <button id="minBtn" class="raised" aria-label="Minimize">_</button>
+        <button id="maxBtn" class="raised" aria-label="Maximize">□</button>
+        <button id="closeBtn" class="raised" aria-label="Close">×</button>
+      </div>
+    </div>
+    <div class="menubar">
+      <button class="menu-button" data-menu="file" aria-expanded="false">File</button>
+      <button class="menu-button" data-menu="edit" aria-expanded="false">Edit</button>
+      <button class="menu-button" data-menu="view" aria-expanded="false">View</button>
+      <button class="menu-button" data-menu="help" aria-expanded="false">Help</button>
+    </div>
+    <div id="menuPopup" class="win menu-popup" role="menu"></div>
+    <div class="toolbar">
+      <button id="backBtn" class="tool" title="Previous page"><span class="tool-icon">◀</span>Back</button>
+      <button id="forwardBtn" class="tool" title="Next page"><span class="tool-icon">▶</span>Forward</button>
+      <div class="sep"></div>
+      <button id="homeBtn" class="tool" title="All prompts"><span class="tool-icon">⌂</span>Home</button>
+      <button id="reloadBtn" class="tool" title="Reload repository data"><span class="tool-icon">⟳</span>Refresh</button>
+      <button id="aboutBtn" class="tool" title="About this project"><span class="tool-icon">ⓘ</span>About</button>
+      <div class="search-tools">
+        <label for="searchInput" class="small" style="color:#333">Find:</label>
+        <input id="searchInput" class="sunken" type="search" placeholder="Search prompt files..." aria-label="Search prompts" autocomplete="off">
+      </div>
+    </div>
+    <div class="addressbar">
+      <label>Address</label>
+      <div class="address-field sunken"><span class="app-mark" style="width:15px;height:14px">P</span><span id="path" class="path">C:\PROMPTS\ALL PROMPTS</span></div>
+      <button id="goBtn" class="go raised">Go</button>
+    </div>
+
+    <div class="workspace">
+      <aside class="sidebar sunken" aria-label="Prompt folders">
+        <div class="pane-heading">Explorer Bar</div>
+        <div class="tree">
+          <div class="tree-heading">Prompt folders</div>
+          <button class="tree-item active" data-filter="all"><span class="tree-symbol">▤</span> All Prompts <small id="allCount">...</small></button>
+          <button class="tree-item" data-filter="featured"><span class="tree-symbol">★</span> Featured <small id="featCount">6</small></button>
+          <div class="tree-heading">Smart folders</div>
+          <button class="tree-item" data-filter="3d"><span class="tree-symbol">▣</span> 3D & Product</button>
+          <button class="tree-item" data-filter="illustration"><span class="tree-symbol">✎</span> Illustration</button>
+          <button class="tree-item" data-filter="photo"><span class="tree-symbol">▧</span> Photography</button>
+          <button class="tree-item" data-filter="design"><span class="tree-symbol">▦</span> UI & Graphics</button>
+        </div>
+        <div class="sidebar-foot"><strong>Tip:</strong> Select a prompt file to preview it, then copy its full text.<p class="small" style="margin:7px 0 0">Smart folders use keyword matching.</p></div>
+      </aside>
+      <section class="browser sunken" aria-label="Prompt gallery">
+        <div class="browser-head"><strong id="sectionTitle">All Prompts</strong><span id="matchLabel">Loading directory...</span></div>
+        <div id="cards" class="cards" role="list"></div>
+        <div class="pager"><span id="pageInfo" class="count">...</span><button id="prevPage" class="raised" aria-label="Previous page">◀</button><button id="nextPage" class="raised" aria-label="Next page">▶</button></div>
+      </section>
+      <aside class="inspector win open" id="inspector" aria-label="Selected prompt">
+        <div class="titlebar"><div class="title-left"><span class="app-mark">i</span><span>Prompt Properties</span></div><div class="win-controls"><button id="hideInspector" class="raised" title="Hide inspector">×</button></div></div>
+        <div class="inspector-body">
+          <div class="previewimage"><div class="empty" id="previewVisual">Select a prompt to preview</div></div>
+          <div class="filetag" id="fileType">PROMPT FILE</div>
+          <h2 id="selectedTitle" class="selected-title">Welcome to Prompt Explorer</h2>
+          <p id="selectedDesc" class="desc">A Windows 98-inspired browser for the GPT Image 2 community prompt collection.</p>
+          <div class="metadata"><b>Author</b><span id="author">—</span><b>Published</b><span id="published">—</span><b>Folder</b><span id="folder">All Prompts</span></div>
+          <div class="prompt-label">Prompt.txt <span id="charCount" class="small"></span></div>
+          <pre id="promptText" class="prompt-pre">Select a prompt file.</pre>
+          <div class="previewactions">
+            <button id="copyBtn" class="raised" disabled>Copy Prompt</button>
+            <button id="sourceBtn" class="raised" disabled>Source ↗</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <div class="statusbar">
+      <span id="status" class="cell">Connecting to prompt library...</span>
+      <span id="itemsStatus" class="cell">0 objects</span>
+      <span class="cell">Windows 98 Edition</span>
+    </div>
+  </main>
+
+  <section id="floating" class="floating win" aria-label="Library information">
+    <div class="titlebar"><div class="title-left"><span class="app-mark">i</span><span>Collection Info</span></div><div class="win-controls"><button id="floatClose" class="raised" aria-label="Close information window">×</button></div></div>
+    <div class="floating-content">Directory: <strong>GPT_IMAGE_2</strong><br><span id="floatingCount">Connecting to archive...</span><br>Theme: WINDOWS_98.EXE</div>
+  </section>
+
+  <nav id="startMenu" class="win" aria-label="Start menu"><div class="start-menu-content"><div class="start-menu-rail">Windows 98</div><div class="start-menu-items">
+    <button data-action="restore">▣ &nbsp; Prompt Explorer</button>
+    <button data-action="featured">★ &nbsp; Featured Prompts</button>
+    <button data-action="open">▤ &nbsp; Open README.md</button>
+    <button data-action="about">ⓘ &nbsp; About</button>
+    <div style="height:1px;background:#777;border-bottom:1px solid white;margin-top:auto"></div>
+    <button data-action="close">⏻ &nbsp; Close window</button>
+  </div></div></nav>
+  <div id="taskbar">
+    <button id="startBtn" class="start raised" aria-expanded="false"><span class="start-logo"></span>Start</button>
+    <div class="task-split"></div>
+    <button id="taskApp" class="task-app raised active"><span class="app-mark">P</span> GPT Image 2 - Prompt Explorer</button>
+    <div class="tray"><span style="color:var(--navy)">▣</span><span id="clock" class="clock">00:00</span></div>
+  </div>
+  <div id="modal" class="modal-scrim" role="presentation"><div class="dialog win" role="dialog" aria-modal="true" aria-label="About prompt explorer"><div class="titlebar"><div class="title-left"><span class="app-mark">i</span><span>About Prompt Explorer</span></div><div class="win-controls"><button class="raised" id="dialogClose" aria-label="Close dialog">×</button></div></div><div class="dialog-body"><p style="margin:0 0 10px"><strong>GPT Image 2 Prompt Explorer</strong><br>Windows 98 Edition v1.0</p><p>A separate interface for browsing the community prompt collection in <strong>framevoid1312/awesome-gpt-image-2</strong>. The original repository content is read-only and remains unchanged.</p><p class="small">Source data: README.md on the main branch. Interface: standalone HTML, CSS and JavaScript. Built for a 16:9 desktop canvas.</p></div><div class="dialog-actions"><button id="dialogOk" class="raised">OK</button></div></div></div>
+  <div id="toast" class="win" role="status" aria-live="polite"></div>
+  <input id="readmeInput" type="file" accept=".md,.markdown,text/markdown,text/plain" hidden>
+</div>
+
+<script>
+(function(){
+'use strict';
+var SOURCE='https://raw.githubusercontent.com/framevoid1312/awesome-gpt-image-2/main/README.md';
+var REPO='https://github.com/framevoid1312/awesome-gpt-image-2';
+var perPage=18,active='all',page=0,selected=null,items=[],featuredItems=[],allItems=[],loaded=false;
+var byId=function(id){return document.getElementById(id)};
+var escapeAttr=function(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')};
+var fallback=[
+ {id:'f1',title:'VR Headset Exploded View Poster',description:'High-tech exploded view diagram of a VR headset with component callouts.',image:'https://cms-assets.youmind.com/media/1776658772018_lukyfw_HGSUfldbIAEiMWZ.jpg',featured:true,author:'wory＠ホッピング中',published:'April 19, 2026',source:'https://x.com/wory37303852/status/2045925660401795478',prompt:''},
+ {id:'f2',title:'Illustrated City Food Map',description:'A hand-drawn watercolor tourist map featuring local dishes, landmarks and legend.',image:'https://cms-assets.youmind.com/media/1776662673014_nf0taw_HGRMNDybsAAGG88.jpg',featured:true,author:'皮皮特',published:'April 19, 2026',source:'https://x.com/mm_zzm44854/status/2045861258520568230',prompt:''},
+ {id:'f3',title:'Momotaro Explainer Slide in Hybrid Style',description:'A Japanese explainer slide mixing warm illustration and information-dense diagrams.',image:'https://cms-assets.youmind.com/media/1776699414289_t6mebs_HGQQxukbUAA_qc0.jpg',featured:true,author:'やまもん',published:'April 19, 2026',source:'https://x.com/yammamon/status/2045778624092254603',prompt:'Create an explanatory slide ({argument name="format" default="ponchi-e diagram"}) for {argument name="theme" default="Momotaro"} that fuses the gentle atmosphere of "Irasutoya" with the overwhelming information density of "Kasumigaseki slides".'},
+ {id:'f4',title:'E-commerce Live Stream UI Mockup',description:'A live stream interface with chat overlays, gift popups and shopping cards.',image:'https://cms-assets.youmind.com/media/1776699445498_ga2ry5_HGO7H0DWkAApdKK.jpg',featured:true,author:'神经病不想好转',published:'April 19, 2026',source:'https://x.com/sjbbxhz/status/2045684734714380687',prompt:''},
+ {id:'f5',title:'Anime Martial Arts Battle Illustration',description:'Dynamic anime fight with two martial artists, elemental effects and a dojo setting.',image:'https://cms-assets.youmind.com/media/1776756799880_c8u8w7_HGUKjjaasAAvVRa.jpg',featured:true,author:'たねもみ 2.0',published:'April 20, 2026',source:'https://x.com/Tanemomi_Ver2/status/2046063806846214265',prompt:''},
+ {id:'f6',title:'3D Stone Staircase Evolution Infographic',description:'Photorealistic 3D stone steps illustrating an evolutionary timeline.',image:'https://cms-assets.youmind.com/media/1776661968404_8a5flm_HGQc_KOaMAA2vt0.jpg',featured:true,author:'知识猫图解',published:'April 19, 2026',source:'https://x.com/GeekCatX/status/2045792240044511277',prompt:''}
+];
+function group(item){
+ var s=(item.title+' '+item.description).toLowerCase();
+ if(/3d|product|render|isometric|e-commerce|ecommerce|exploded/.test(s))return '3d';
+ if(/illustrat|drawing|anime|comic|watercolor|sketch|manga|cartoon/.test(s))return 'illustration';
+ if(/photo|portrait|selfie|camera|cinematic|editorial/.test(s))return 'photo';
+ if(/poster|infographic|slide|diagram|interface|ui |logo|graphic|typograph|website|layout/.test(s))return 'design';
+ return 'other';
+}
+function parseMarkdown(md){
+ var marker=md.indexOf('## 📋 All Prompts');
+ var before=marker<0?md:md.slice(0,marker);
+ var after=marker<0?md:md.slice(marker);
+ function read(text,isFeatured){
+  var arr=text.split(/(?=^### No\.\s*\d+\s*:)/m),result=[];
+  arr.forEach(function(block,index){
+   var name=block.match(/^### No\.\s*(\d+)\s*:\s*(.+)$/m);
+   if(!name)return;
+   var desc=block.match(/#### 📖 Description\s*\r?\n([\s\S]*?)(?=#### 📝 Prompt)/);
+   var prompt=block.match(/#### 📝 Prompt\s*\r?\n\s*```[^\r\n]*\r?\n([\s\S]*?)\r?\n```/);
+   var photo=block.match(/<img[^>]+src=["'](https?:\/\/[^"']+)["']/i);
+   var author=block.match(/\*\*Author:\*\*\s*(?:\[([^\]]+)\]\([^)]+\)|([^\r\n]+))/);
+   var link=block.match(/\*\*Source:\*\*\s*\[[^\]]+\]\((https?:\/\/[^)\s]+)/);
+   var date=block.match(/\*\*Published:\*\*\s*([^\r\n]+)/);
+   var gallery=block.match(/youmind\.com\/gpt-image-2-prompts\?id=(\d+)/);
+   var item={id:(isFeatured?'f':'a')+name[1],title:name[2].trim(),description:desc?desc[1].trim().replace(/\r/g,'').replace(/\n+/g,' '):'',prompt:prompt?prompt[1].trim():'',image:photo?photo[1]:'',featured:isFeatured,author:author?(author[1]||author[2]).trim():'Community',published:date?date[1].trim():'—',source:link?link[1]:(gallery?'https://youmind.com/gpt-image-2-prompts?id='+gallery[1]:REPO)};
+   item.group=group(item);
+   result.push(item);
+  });
+  return result;
+ }
+ return {featured:read(before,true),all:read(after,false)};
+}
+function refreshFromMarkdown(md){
+ var data=parseMarkdown(md);
+ if(!data.all.length && !data.featured.length)throw new Error('No prompt records detected in the Markdown file.');
+ featuredItems=data.featured.length?data.featured:fallback.map(function(x){return Object.assign({group:group(x)},x)});
+ allItems=data.all.length?data.all:featuredItems;
+ items=allItems;loaded=true;page=0;
+ byId('allCount').textContent=allItems.length;
+ byId('featCount').textContent=featuredItems.length;
+ byId('floatingCount').textContent=allItems.length+' prompt files loaded';
+ var total=allItems.length+featuredItems.length;
+ byId('status').textContent='Done. '+total+' entries parsed; '+allItems.length+' unique main-list prompts.';
+ render();
+}
+function initial(){
+ featuredItems=fallback.map(function(x){return Object.assign({group:group(x)},x)});
+ allItems=featuredItems;
+ items=allItems;
+ byId('floatingCount').textContent='Preview cache: '+featuredItems.length+' featured files';
+ byId('allCount').textContent='...';
+ render();
+}
+async function load(){
+ byId('status').textContent='Reading source README.md...';
+ try{
+  var resp=await fetch(SOURCE,{cache:'no-store'});
+  if(!resp.ok)throw new Error('HTTP '+resp.status);
+  var markdown=await resp.text();
+  refreshFromMarkdown(markdown);
+ }catch(err){
+  loaded=false;byId('status').textContent='Offline preview. Use File > Open README.md to load full library.';
+  byId('floatingCount').textContent='Offline: '+featuredItems.length+' cached previews';
+  render();
+ }
+}
+function results(){
+ var q=byId('searchInput').value.toLowerCase().trim();
+ var base=active==='featured'?featuredItems:allItems;
+ if(active!=='all' && active!=='featured')base=allItems.filter(function(x){return x.group===active});
+ if(q)base=base.filter(function(x){return (x.title+' '+x.description+' '+x.author).toLowerCase().includes(q)});
+ return base;
+}
+function shortTitle(s,max){return s.length>max?s.slice(0,max-1)+'…':s}
+function render(){
+ var arr=results(),n=Math.max(1,Math.ceil(arr.length/perPage));if(page>=n)page=n-1;
+ var list=arr.slice(page*perPage,(page+1)*perPage);
+ var labels={all:'All Prompts',featured:'Featured Prompts','3d':'3D & Product',illustration:'Illustration',photo:'Photography',design:'UI & Graphics'};
+ byId('sectionTitle').textContent=labels[active]||'Prompt Files';
+ byId('matchLabel').textContent=arr.length+' matching files';
+ byId('path').textContent='C:\\PROMPTS\\'+(labels[active]||'ALL PROMPTS').toUpperCase().replace(/ /g,'_');
+ byId('pageInfo').textContent='Page '+(page+1)+' of '+n;
+ byId('prevPage').disabled=page===0;
+ byId('nextPage').disabled=page>=n-1;
+ byId('itemsStatus').textContent=arr.length+' objects';
+ document.querySelectorAll('.tree-item').forEach(function(b){b.classList.toggle('active',b.dataset.filter===active)});
+ var el=byId('cards');el.textContent='';
+ if(!list.length){el.innerHTML='<div style="padding:25px;color:#666;grid-column:1/-1">No matching files.<br><br>Try another folder or search term.</div>';showItem(null);return;}
+ list.forEach(function(it){
+  var b=document.createElement('button');b.className='item';b.setAttribute('role','listitem');b.title=it.title;
+  if(it.id===(selected&&selected.id))b.classList.add('selected');
+  var thumb=document.createElement('span');thumb.className='thumb';
+  if(it.image){
+   var img=document.createElement('img');img.loading='lazy';img.src=it.image;img.alt='Generated image for '+it.title;
+   img.onerror=function(){thumb.textContent='▧';thumb.classList.add('fallback-icon')};
+   thumb.appendChild(img);
+  }else{thumb.innerHTML='<span class="fallback-icon">▧</span>'}
+  var nm=document.createElement('span');nm.className='n';nm.textContent=shortTitle(it.title,76);
+  var meta=document.createElement('span');meta.className='meta';
+  var left=document.createElement('span');left.textContent=it.featured?'★ FEATURED':'PROMPT.TXT';
+  var right=document.createElement('span');right.textContent=it.group.toUpperCase().slice(0,8);
+  meta.appendChild(left);meta.appendChild(right);
+  b.appendChild(thumb);b.appendChild(nm);b.appendChild(meta);
+  b.addEventListener('click',function(){selected=it;showItem(it);document.querySelectorAll('.item').forEach(function(c){c.classList.toggle('selected',c===b)});byId('inspector').classList.add('open')});
+  el.appendChild(b);
+ });
+ if(!selected || !arr.some(function(x){return x.id===selected.id})){selected=list[0];showItem(selected);el.firstElementChild.classList.add('selected');}
+ else showItem(selected);
+}
+function showItem(it){
+ if(!it){
+  selected=null;byId('previewVisual').textContent='No preview';byId('selectedTitle').textContent='No prompt selected';byId('selectedDesc').textContent='Try another search.';byId('promptText').textContent='';byId('copyBtn').disabled=true;byId('sourceBtn').disabled=true;return;
+ }
+ selected=it;
+ var vis=byId('previewVisual');vis.textContent='';
+ if(it.image){
+  var img=document.createElement('img');img.src=it.image;img.alt='Generated example: '+it.title;
+  img.onerror=function(){vis.textContent='Preview image unavailable';vis.className='empty'};
+  vis.className='';vis.appendChild(img);
+ }else{vis.className='empty';vis.textContent='No image preview'}
+ byId('fileType').textContent=(it.featured?'★ FEATURED · ':'')+(it.group||'PROMPT').toUpperCase()+' · PROMPT.TXT';
+ byId('selectedTitle').textContent=it.title;
+ byId('selectedDesc').textContent=it.description||'No description provided.';
+ byId('author').textContent=it.author||'Community';
+ byId('published').textContent=it.published||'—';
+ byId('folder').textContent=it.group==='3d'?'3D & Product':it.group==='photo'?'Photography':it.group==='design'?'UI & Graphics':it.group==='illustration'?'Illustration':'All Prompts';
+ byId('promptText').textContent=it.prompt||'Full prompt text is available after loading the repository README.md.';
+ byId('charCount').textContent=it.prompt?it.prompt.length+' chars':'';
+ byId('copyBtn').disabled=!it.prompt;
+ byId('sourceBtn').disabled=!it.source;
+}
+function setFilter(filter){active=filter;page=0;selected=null;byId('startMenu').classList.remove('visible');render();}
+function switchPage(n){var count=results().length;page=Math.max(0,Math.min(Math.ceil(count/perPage)-1,page+n));selected=null;render();}
+function toast(message){var el=byId('toast');el.textContent=message;el.classList.add('visible');clearTimeout(toast.timer);toast.timer=setTimeout(function(){el.classList.remove('visible')},2300);}
+function restore(){var w=byId('mainWin');w.classList.remove('closed','minimized');byId('taskApp').classList.add('active')}
+function closeMenus(){byId('startMenu').classList.remove('visible');byId('startBtn').setAttribute('aria-expanded','false');byId('menuPopup').classList.remove('visible');document.querySelectorAll('[data-menu]').forEach(function(x){x.setAttribute('aria-expanded','false')})}
+function showDialog(){closeMenus();byId('modal').classList.add('visible');byId('dialogOk').focus()}
+function openReadme(){closeMenus();byId('readmeInput').click()}
+function command(cmd){
+ closeMenus();
+ if(cmd==='restore')restore();
+ if(cmd==='featured'){restore();setFilter('featured')}
+ if(cmd==='about')showDialog();
+ if(cmd==='close')byId('mainWin').classList.add('closed');
+ if(cmd==='open')openReadme();
+ if(cmd==='refresh')load();
+ if(cmd==='copy')copyPrompt();
+ if(cmd==='grid')byId('cards').style.gridTemplateColumns='';
+ if(cmd==='large')byId('cards').style.gridTemplateColumns='repeat(auto-fill,minmax(190px,1fr))';
+}
+function openMenu(type,button){
+ var list={
+ file:[['Open README.md...','open'],['Refresh from GitHub','refresh'],['Close','close']],
+ edit:[['Copy selected prompt','copy']],
+ view:[['Small icons','grid'],['Large icons','large'],['Featured prompts','featured']],
+ help:[['About Prompt Explorer','about']]
+ }[type]||[];
+ var pop=byId('menuPopup');pop.textContent='';list.forEach(function(row){var b=document.createElement('button');b.textContent=row[0];b.addEventListener('click',function(){command(row[1])});pop.appendChild(b)});
+ var x=button.getBoundingClientRect(),base=byId('mainWin').getBoundingClientRect();
+ pop.style.left=Math.max(5,x.left-base.left-1)+'px';pop.classList.add('visible');
+ document.querySelectorAll('[data-menu]').forEach(function(t){t.setAttribute('aria-expanded',String(t===button))});
+}
+async function copyPrompt(){
+ if(!selected||!selected.prompt)return;
+ try{
+  if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(selected.prompt);}
+  else{var t=document.createElement('textarea');t.value=selected.prompt;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();if(!document.execCommand('copy'))throw new Error('Copy failed');t.remove();}
+  toast('Prompt copied to clipboard');
+ }catch(e){toast('Copy unavailable. Select text in Prompt.txt.')}
+}
+byId('backBtn').addEventListener('click',function(){switchPage(-1)});
+byId('forwardBtn').addEventListener('click',function(){switchPage(1)});
+byId('prevPage').addEventListener('click',function(){switchPage(-1)});
+byId('nextPage').addEventListener('click',function(){switchPage(1)});
+byId('homeBtn').addEventListener('click',function(){byId('searchInput').value='';setFilter('all')});
+byId('reloadBtn').addEventListener('click',load);
+byId('goBtn').addEventListener('click',function(){byId('searchInput').focus()});
+byId('aboutBtn').addEventListener('click',showDialog);
+byId('copyBtn').addEventListener('click',copyPrompt);
+byId('sourceBtn').addEventListener('click',function(){if(selected&&selected.source)window.open(selected.source,'_blank','noopener,noreferrer')});
+byId('searchInput').addEventListener('input',function(){page=0;selected=null;render()});
+byId('hideInspector').addEventListener('click',function(){byId('inspector').classList.remove('open');toast('Prompt Properties hidden. Select another file to reopen.')});
+document.querySelectorAll('.tree-item').forEach(function(b){b.addEventListener('click',function(){setFilter(b.dataset.filter)})});
+document.querySelectorAll('[data-action]').forEach(function(b){b.addEventListener('click',function(){command(b.dataset.action)})});
+document.querySelectorAll('[data-menu]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();if(byId('menuPopup').classList.contains('visible')&&b.getAttribute('aria-expanded')==='true')closeMenus();else openMenu(b.dataset.menu,b)})});
+byId('minBtn').addEventListener('click',function(){byId('mainWin').classList.add('minimized');byId('taskApp').classList.remove('active')});
+byId('maxBtn').addEventListener('click',function(){byId('mainWin').classList.toggle('maximized')});
+byId('closeBtn').addEventListener('click',function(){byId('mainWin').classList.add('closed');byId('taskApp').classList.remove('active')});
+byId('taskApp').addEventListener('click',function(){byId('mainWin').classList.contains('minimized')||byId('mainWin').classList.contains('closed')?restore():byId('mainWin').classList.add('minimized')});
+byId('startBtn').addEventListener('click',function(e){e.stopPropagation();var open=byId('startMenu').classList.toggle('visible');byId('startBtn').setAttribute('aria-expanded',String(open))});
+byId('floatClose').addEventListener('click',function(){byId('floating').classList.add('hidden')});
+byId('dialogClose').addEventListener('click',function(){byId('modal').classList.remove('visible')});
+byId('dialogOk').addEventListener('click',function(){byId('modal').classList.remove('visible')});
+byId('modal').addEventListener('click',function(e){if(e.target===byId('modal'))byId('modal').classList.remove('visible')});
+document.addEventListener('click',function(e){if(!e.target.closest('#startMenu')&&!e.target.closest('#startBtn')&&!e.target.closest('.menu-button')&&!e.target.closest('#menuPopup'))closeMenus()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeMenus();byId('modal').classList.remove('visible')}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='f'){e.preventDefault();restore();byId('searchInput').focus();byId('searchInput').select()}});
+byId('readmeInput').addEventListener('change',async function(e){var f=e.target.files&&e.target.files[0];if(!f)return;try{refreshFromMarkdown(await f.text());toast('Loaded local README.md')}catch(err){toast('Could not parse: '+err.message)}this.value=''});
+function clock(){byId('clock').textContent=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}
+clock();setInterval(clock,15000);initial();load();
+})();
+</script>
+</body>
+</html>
